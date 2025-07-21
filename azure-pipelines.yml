@@ -1,0 +1,75 @@
+trigger:
+  - none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  - group: 'Release'
+
+stages:
+- stage: 'Build'
+  displayName: 'Build App'
+  jobs:
+    - job: 'Build'
+      displayName: 'Build Job'
+      steps:
+        - task: NuGetToolInstaller@1
+          inputs:
+            versionSpec: '5.8.0'
+            checkLatest: true
+          
+        - task: NuGetCommand@2
+          inputs:
+            restoreSolution: '$(solution)'
+
+        - task: VSBuild@1
+          displayName: 'Build - $(buildConfiguration)'
+          inputs:
+            solution: '$(solution)'
+            msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+            platform: '$(buildPlatform)'
+            configuration: '$(buildConfiguration)'
+
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish the project - $(buildConfiguration)'
+          inputs:
+            command: 'publish'
+            projects: '**/API.csproj'
+            publishWebProjects: false
+            arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+            zipAfterPublish: true
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          condition: succeeded()
+
+- stage: 'Deploy'
+  displayName: 'Deploy BlazorApp'
+  dependsOn: Build
+  condition: succeeded('Build')
+  jobs:
+  - deployment: DeployWeb
+    pool:
+      vmImage: 'windows-latest'
+    environment: '$(environment)'
+    variables: 
+      ConnectionStrings.Default: $(connectionString)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: drop
+            
+            - task: AzureRmWebAppDeployment@4
+              displayName: 'Azure App Service Deploy: BlazorApp'
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: '$(azureSubscriptionDev)'
+                appType: 'webApp'
+                WebAppName: '$(webAppDev)'
+                package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/API.zip'
+                JSONFiles: '**/appsettings.json'
+                enableCustomDeployment: true
+

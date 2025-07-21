@@ -1,0 +1,28 @@
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main-content {
+    flex: 1;
+}
+
+.sidebar {
+    padding-left: 4px;
+    padding-top: 1rem;
+    padding-right: 4px;
+}
+
+@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 280px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+}

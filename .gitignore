@@ -1,0 +1,47 @@
+# Visual Studio temporary files
+.vs/
+bin/
+obj/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet packages
+packages/
+
+# Resharper folder
+_ReSharper.*
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Visual Studio code coverage results
+*.opendb
+
+# Roslyn cache
+*.ide/
+
+# Miscellaneous
+*.log
+*.sqlite
+*.sqlite3
+*.sdf
+*.pfx
+*.bak
+*.cache
+*.csproj.user
+Thumbs.db

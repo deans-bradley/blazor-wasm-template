@@ -1,0 +1,49 @@
+﻿@page "/weather"
+@using BlazorApp.Client.ViewModels.Interfaces
+@using Models.Contracts.Weather
+@inject IWeatherViewModel viewModel
+
+<PageTitle>Weather</PageTitle>
+
+<div class="page-container">
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">Today's Forecast</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            @if (loading)
+            {
+                <MudProgressCircular Color="Color.Primary" Size="Size.Medium" Indeterminate="true" />
+            }
+            else
+            {
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.DeviceThermostat" Color="Color.Warning" Title="Temperature" />
+                    <MudText>@($"{todaysWeather.Temprature}°C")</MudText>
+                </MudStack>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Cloud" Color="Color.Default" Title="Cloud" />
+                    <MudText>@($"{todaysWeather.CloudCoverage}")</MudText>
+                </MudStack>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.WaterDrop" Color="Color.Info" Title="Rain" />
+                    <MudText>@($"{todaysWeather.RainCoverage}%")</MudText>
+                </MudStack>
+            }
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    private TodaysWeatherResponse todaysWeather = new();
+    private bool loading = false;
+
+    protected async override Task OnInitializedAsync()
+    {
+        loading = true;
+        todaysWeather = await viewModel.GetTodaysWeather();
+        loading = false;
+    }
+}
