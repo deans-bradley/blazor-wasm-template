@@ -223,7 +223,7 @@ To customize the template for your project:
 
 ## Contributing
 
-We welcome contributions! Please follow these steps:
+I am open to contributions. Please follow these steps:
 
 1. **Fork the repository**
 2. **Create a feature branch**
