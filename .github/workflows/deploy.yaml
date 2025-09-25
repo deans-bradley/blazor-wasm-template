@@ -1,0 +1,119 @@
+name: Deploy Blazor WASM to Azure
+
+on:
+  workflow_dispatch:  # Manual trigger
+  # Uncomment below to trigger on push to specific branches
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  NUGET_VERSION: '5.8.0'
+  BUILD_CONFIGURATION: 'Release'
+  BUILD_PLATFORM: 'Any CPU'
+
+jobs:
+  build:
+    name: Build App
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+        with:
+          nuget-version: ${{ env.NUGET_VERSION }}
+      
+      - name: Restore NuGet packages
+        run: nuget restore ${{ vars.SOLUTION_PATH }}
+      
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      
+      - name: Build solution
+        run: |
+          msbuild ${{ vars.SOLUTION_PATH }} `
+            /p:Configuration=${{ env.BUILD_CONFIGURATION }} `
+            /p:Platform="${{ env.BUILD_PLATFORM }}" `
+            /p:DeployOnBuild=true `
+            /p:WebPublishMethod=Package `
+            /p:PackageAsSingleFile=true `
+            /p:SkipInvalidConfigurations=true `
+            /p:DesktopBuildPackageLocation="${{ github.workspace }}\WebApp.zip" `
+            /p:DeployIisAppPath="Default Web Site"
+      
+      - name: Publish API project
+        run: |
+          dotnet publish "**/API.csproj" `
+            --configuration ${{ env.BUILD_CONFIGURATION }} `
+            --output "${{ github.workspace }}/publish/${{ env.BUILD_CONFIGURATION }}"
+      
+      - name: Create API zip
+        run: |
+          Compress-Archive -Path "${{ github.workspace }}/publish/${{ env.BUILD_CONFIGURATION }}/*" `
+            -DestinationPath "${{ github.workspace }}/publish/${{ env.BUILD_CONFIGURATION }}/API.zip"
+        shell: pwsh
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: |
+            ${{ github.workspace }}/publish/${{ env.BUILD_CONFIGURATION }}/API.zip
+            ${{ github.workspace }}/WebApp.zip
+
+  deploy:
+    name: Deploy BlazorApp
+    needs: build
+    runs-on: windows-latest
+    environment: production
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: drop
+          path: ${{ github.workspace }}/drop
+      
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ github.workspace }}/drop/API.zip
+      
+      # Alternative: Using Azure Service Principal instead of publish profile
+      # - name: Login to Azure
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # 
+      # - name: Deploy to Azure Web App
+      #   uses: azure/webapps-deploy@v3
+      #   with:
+      #     app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+      #     package: ${{ github.workspace }}/drop/API.zip
+      
+      - name: Update App Settings
+        uses: azure/appservice-settings@v1
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          connection-strings-json: |
+            [
+              {
+                "name": "Default",
+                "value": "${{ secrets.CONNECTION_STRING }}",
+                "type": "SQLServer",
+                "slotSetting": false
+              }
+            ]
+        # Requires Azure login step to be uncommented above
