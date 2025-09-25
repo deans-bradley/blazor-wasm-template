@@ -1,10 +1,10 @@
 # Blazor WASM Template
 
-A comprehensive full-stack template for Blazor WebAssembly applications built with .NET 9, featuring a clean waterfall architecture and modern UI components.
+A comprehensive full-stack template for Blazor WebAssembly applications built with .NET 10, featuring a clean waterfall architecture and modern UI components.
 
 ## Features
 
-- **Modern Stack**: Built on .NET 9.0 with the latest Blazor WebAssembly
+- **Modern Stack**: Built on .NET 10.0 with the latest Blazor WebAssembly
 - **Clean Architecture**: Implements waterfall architecture with clear separation of concerns
 - **MVVM Pattern**: Client-side MVVM design pattern with dependency injection
 - **Rich UI**: Pre-configured with [MudBlazor](https://mudblazor.com/) for beautiful, responsive components
@@ -53,7 +53,7 @@ The client uses the **Model-View-ViewModel (MVVM)** pattern with dependency inje
 @code {
     private async Task LoadWeather()
     {
-        TodaysWeatherResponse weather = await viewModel.GetTodaysWeather();
+        TodaysWeatherResponse weatherResponse = await viewModel.GetTodaysWeather();
         // Handle response...
     }
 }
@@ -103,7 +103,7 @@ public class WeatherService(IWeatherRepository weatherRepository) : IWeatherServ
 
     public async Task<TodaysWeatherResponse> GetTodaysWeather()
     {
-        var weatherData = await _weatherRepository.GetCurrentWeatherAsync();
+        WeatherData weatherData = await _weatherRepository.GetCurrentWeatherAsync();
         
         // Apply business logic, transformations, validations
         return new TodaysWeatherResponse
@@ -166,8 +166,8 @@ This architecture ensures:
 
 ### Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download) installed on your machine
-- A code editor (Visual Studio 2022, VS Code, or JetBrains Rider)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) installed on your machine
+- A code editor (Visual Studio 2026 or VS Code)
 
 ### Installation
 
@@ -193,7 +193,7 @@ The API and client run simultaneously - no need to start them separately.
 
 #### Using Visual Studio
 - Press `F5` to start debugging, or
-- Use `Ctrl+F5` to run without debugging
+- Use `Ctrl` + `F5` to run without debugging
 
 #### Using Command Line
 ```bash
