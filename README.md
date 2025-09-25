@@ -1,10 +1,10 @@
 # Blazor WASM Template
 
-A comprehensive full-stack template for Blazor WebAssembly applications built with .NET 10, featuring a clean waterfall architecture and modern UI components.
+A comprehensive full-stack template for Blazor WebAssembly applications built with .NET 10 (preview), featuring a clean waterfall architecture and modern UI components.
 
 ## Features
 
-- **Modern Stack**: Built on .NET 10.0 with the latest Blazor WebAssembly
+- **Modern Stack**: Built on .NET 10 (preview) with the latest Blazor WebAssembly
 - **Clean Architecture**: Implements waterfall architecture with clear separation of concerns
 - **MVVM Pattern**: Client-side MVVM design pattern with dependency injection
 - **Rich UI**: Pre-configured with [MudBlazor](https://mudblazor.com/) for beautiful, responsive components
@@ -16,13 +16,22 @@ A comprehensive full-stack template for Blazor WebAssembly applications built wi
 
 ```
 blazor-wasm-template/
-├── API/                    # Web API layer with FastEndpoints
-├── BlazorApp.Client/       # Blazor WebAssembly client application
-├── BlazorApp.Shared/       # Shared contracts and DTOs
-├── BlazorApp.Utils/        # Shared business logic utilities
-├── BLL/                    # Business Logic Layer
-├── DAL/                    # Data Access Layer
-└── Models/                 # Domain models and entities
+├── .github/                # GitHub Actions workflows
+│   └── workflows/
+│       └── deploy.yaml     # Automated deployment workflow
+├── .vscode/                # VS Code configuration
+│   ├── launch.json         # Debug configurations
+│   ├── settings.json       # Workspace settings
+│   └── tasks.json          # Build and run tasks
+├── src/                    # Source code directory
+│   ├── API/                # Web API layer with FastEndpoints
+│   ├── BlazorApp.Client/   # Blazor WebAssembly client application
+│   ├── BlazorApp.Shared/   # Shared contracts and DTOs
+│   ├── BlazorApp.Utils/    # Shared business logic utilities
+│   ├── BLL/                # Business Logic Layer
+│   ├── DAL/                # Data Access Layer
+│   └── Models/             # Domain models and entities
+└── BlazorApp.sln           # Solution file (located in src/)
 ```
 
 ## Architecture Overview
@@ -34,6 +43,9 @@ This template implements a waterfall architecture pattern with clear separation 
 - **DAL (Data Access Layer)**: Manages data persistence and retrieval
 - **Client Layer**: Blazor WebAssembly frontend with MudBlazor components using MVVM pattern
 - **Shared Layer**: Common contracts, DTOs, and utilities used across layers
+- **Utils Layer**: Cross-cutting concerns and shared utilities
+- **CI/CD**: Automated deployment via GitHub Actions and Azure Pipelines
+- **Development**: Enhanced VS Code integration with pre-configured tasks and debugging
 
 ## Data Flow Architecture
 
@@ -166,8 +178,10 @@ This architecture ensures:
 
 ### Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download) installed on your machine
-- A code editor (Visual Studio 2026 or VS Code)
+- [.NET 10 SDK (preview)](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed on your machine
+- **Visual Studio Code** with C# Dev Kit extension, or **Visual Studio 2026 (Insiders)**
+  
+> **Note**: This project requires .NET 10 preview and is only supported in VS Code or Visual Studio 2026 (Insiders). Earlier versions of Visual Studio are not supported.
 
 ### Installation
 
@@ -179,34 +193,66 @@ This architecture ensures:
 
 2. **Restore dependencies**
    ```bash
-   dotnet restore
+   dotnet restore src/
    ```
 
 3. **Build the solution**
    ```bash
-   dotnet build
+   dotnet build src/
    ```
 
 ### Running the Application
 
 The API and client run simultaneously - no need to start them separately.
 
-#### Using Visual Studio
+#### Using Visual Studio 2026 (Insiders)
 - Press `F5` to start debugging, or
 - Use `Ctrl` + `F5` to run without debugging
+
+#### Using VS Code
+The project includes pre-configured VS Code tasks for easy development:
+
+**Tasks**
+- **Build API**: Builds the API project
+- **App (Dev)**: Builds and runs the app in `Development`, launches the app in the browser 
+
+- In the **Run and Debug** panel, select **App (Dev)** in the dropdown.
+- Press `F5`** to start debugging (uses the configured launch profile).
 
 #### Using Command Line
 ```bash
 # From the root directory
-dotnet run --project API
-```
-
-#### Using VS Code
-```bash
-dotnet run --project API
+dotnet run --project src/API
 ```
 
 Once running, navigate to `https://localhost:{port}` in your browser (the exact port will be displayed in the console).
+
+## Deployment
+
+This template includes automated deployment via GitHub Actions:
+
+### GitHub Actions Workflow
+
+The project includes a `deploy.yaml` workflow in `.github/workflows/` that provides:
+
+- **Automated CI/CD**: Builds and deploys your application on code changes
+- **Multi-environment support**: Configure different deployment targets
+- **Dependency caching**: Faster build times with NuGet package caching
+- **Security**: Uses GitHub secrets for secure deployment credentials
+
+To set up deployment:
+
+1. Configure your deployment target (Azure, AWS, etc.) in the `deploy.yaml` file
+2. Add required secrets to your GitHub repository settings
+3. Push changes to trigger automatic deployment
+
+> **Note**: Review and customize the deployment workflow according to your hosting requirements.
+
+## Recommended VS Code Extensions
+
+For the best development experience, install these extensions:
+- **C# Dev Kit** - Essential C# support and debugging
+- **C#** - Language support for C#
 
 ## Customization
 
@@ -248,7 +294,7 @@ Please ensure your code follows the existing patterns and includes appropriate t
 - [**FastEndpoints**](https://fast-endpoints.com/) - High-performance API framework
 - [**MudBlazor**](https://mudblazor.com/) - Material Design component library
 - [**Blazored LocalStorage**](https://github.com/Blazored/LocalStorage) - Browser local storage wrapper
-- **.NET 9** - Latest .NET framework
+- **.NET 10 (preview)** - Latest .NET framework preview
 
 ## License
 
@@ -257,3 +303,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 Special thanks to the creators and maintainers of these excellent frameworks and libraries that make this template possible.
+
+## Changelog
+
+### Version 1.1.0
+- Update project to .NET 10 (preview)
+- Update all project dependencies to latest versions
+- Add automated deployment with GitHub Actions (`deploy.yaml`)
+- Add comprehensive VS Code configuration (`.vscode/` directory)
+  - `launch.json`: Debug configurations for API and client
+  - `tasks.json`: Build and run tasks for streamlined development
+  - `settings.json`: Optimized workspace settings for .NET development
+- Reorganize project structure: move source code to `src/` directory
+- Enhanced development workflow with pre-configured debugging and build tasks
+
+### Version 1.0.1
+- Update README with corrections and add acknowledgment message
+
+### Version 1.0.0
+- Initial release with core functionality
+- API project with fastendpoints
+- Blazor WASM client project with MudBlazor
+- DAL, BLL, Models, Utils, and Shared libraries
