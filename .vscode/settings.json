@@ -1,0 +1,7 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "appsettings.json": "appsettings.*.json",
+    "*.razor": "$(capture).razor.cs, $(capture).razor.css"
+  }
+}

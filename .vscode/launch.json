@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Build API",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build .NET Core API",
+            "program": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/API/API.csproj"
+            ],
+            "cwd": "${workspaceFolder}/API",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "App (Dev)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build .NET Core API",
+            "program": "${workspaceFolder}/API/bin/Debug/net10.0/API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/API",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
+    ]
+}
