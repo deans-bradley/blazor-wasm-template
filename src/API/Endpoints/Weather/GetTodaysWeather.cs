@@ -17,8 +17,7 @@ namespace API.Endpoints.Weather
         public override async Task HandleAsync(CancellationToken ct)
         {
             TodaysWeatherResponse response = await _weatherService.GetTodaysWeather();
-
-            await SendAsync(response, cancellation: ct);
+            await Send.OkAsync(response, cancellation: ct);
         }
     }
 }
