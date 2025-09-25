@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="wwwroot\images\**" />
+    <Compile Remove="wwwroot\js\**" />
     <Content Remove="wwwroot\images\**" />
+    <Content Remove="wwwroot\js\**" />
     <EmbeddedResource Remove="wwwroot\images\**" />
+    <EmbeddedResource Remove="wwwroot\js\**" />
     <None Remove="wwwroot\images\**" />
+    <None Remove="wwwroot\js\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,10 +30,6 @@
     <ProjectReference Include="..\BlazorApp.Shared\BlazorApp.Shared.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\BlazorApp.Utils\BlazorApp.Utils.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 
 </Project>
