@@ -6,7 +6,7 @@
             "type": "shell",
             "command": "dotnet build ./API.csproj",
             "options": {
-                "cwd": "${workspaceFolder}/API"
+                "cwd": "${workspaceFolder}/src/API"
             },
             "problemMatcher": "$msCompile"
         }
